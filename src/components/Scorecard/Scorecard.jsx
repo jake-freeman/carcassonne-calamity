@@ -2,57 +2,106 @@
 
 import { useCallback } from "react";
 import Meeple from "../Meeple/Meeple";
+import styled from 'styled-components';
+
+const MeepleButton = styled.div`
+    display: inline-block;
+    font-size: 30px;
+    font-weight: bold;
+`;
 
 function ScoreButton({
     player,
-    onScoreSubmit,
+    currentState,
+    onAddScoreSubmit,
+    onForceScoreSubmit,
 }) {
-    const triggerScore = useCallback(() => {
-        const scoreStr = window.prompt(`Add score for ${player}: `);
+    const triggerScore = useCallback((event) => {
+        if (event.ctrlKey || event.metaKey) {
+            const scoreStr = window.prompt(`Forcibly change score for ${player}: `, JSON.stringify(currentState.scores[player]));
 
-        const score = Number.parseInt(scoreStr);
+            const score = JSON.parse(scoreStr);
 
-        if (!Number.isNaN(score)) {
-            onScoreSubmit(player, score);
+            if (score) {
+                onForceScoreSubmit(player, score);
+            }
         }
-    }, [onScoreSubmit, player]);
+        else {
+            const scoreStr = window.prompt(`Add score for ${player}: `);
+
+            const score = Number.parseInt(scoreStr);
+
+            if (!Number.isNaN(score)) {
+                onAddScoreSubmit(player, score);
+            }
+        }
+    }, [onAddScoreSubmit, onForceScoreSubmit, player]);
 
     return (
-        <span onClick={triggerScore}>
+        <MeepleButton onClick={triggerScore}>
             <Meeple name={player} width={50} />
-        </span>
+            <div>
+                {currentState.scores[player].reduce((scoreTotal, score) => scoreTotal + score)}
+            </div>
+        </MeepleButton>
     );
 }
+
+const players = [
+    'jake',
+    'joe',
+    'jon',
+    'dan',
+    'catlet',
+]
 
 export default function Scorecard({
     addToScore,
     setScoreByForce,
     undoLast,
-    setRobberPos,
     currentState,
     stateHistory,
     undoHistory
 }) {
-    const onScoreSubmit = useCallback((player, score) => {
+    const onAddScoreSubmit = useCallback((player, score) => {
         addToScore(player, score);
     }, [addToScore]);
 
+    const onForceScoreSubmit = useCallback((player, score) => {
+        setScoreByForce(player, score);
+    }, [setScoreByForce]);
+
     return (
         <div>
-            <ScoreButton player={"jake"} onScoreSubmit={onScoreSubmit} />
-            <ScoreButton player={"joe"} onScoreSubmit={onScoreSubmit} />
-            <ScoreButton player={"jon"} onScoreSubmit={onScoreSubmit} />
-            <ScoreButton player={"dan"} onScoreSubmit={onScoreSubmit} />
-            <ScoreButton player={"catlet"} onScoreSubmit={onScoreSubmit} />
+            {
+                players.map((player, i) => (
+                    <ScoreButton
+                        key={i}
+                        player={player}
+                        currentState={currentState}
+                        onAddScoreSubmit={onAddScoreSubmit}    
+                        onForceScoreSubmit={onForceScoreSubmit}    
+                    />
+                ))
+            }
             <button onClick={() => undoLast()}>Undo</button>
             <div>
-                Current State: {JSON.stringify(currentState)}
+                <h3>State History</h3>
+                {stateHistory.map((state, i) => (
+                    <div key={i}>
+                        {JSON.stringify(state)}
+                    </div>
+                )
+                )}
             </div>
             <div>
-                State History: {JSON.stringify(stateHistory)}
-            </div>
-            <div>
-                Undo History: {JSON.stringify(undoHistory)}
+                <h3>Undo History</h3>
+                {undoHistory.map((state, i) => (
+                    <div key={i}>
+                        {JSON.stringify(state)}
+                    </div>
+                )
+                )}
             </div>
         </div>
     );

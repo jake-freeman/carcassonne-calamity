@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 
 const SAVE_NAME = "carcassonne-calamity-3";
 
+import carcassorithm from './carcassorithm'
+
 export const MERSON_INDEX = 0;
 export const MESSENGER_INDEX = 1;
 
@@ -42,13 +44,17 @@ export default function useCarcasstate() {
     }, [setStateHistory, setUndoHistory]);
 
     useEffect(() => {
-        // Save to local storage
-        // const saveFile = {
-        //     stateHistory,
-        //     undoHistory,
-        // };
+        if (stateHistory.length === 0 && undoHistory.length === 0) {
+            return ;
+        }
 
-        // localStorage.setItem(SAVE_NAME, JSON.stringify(saveFile));
+        // Save to local storage
+        const saveFile = {
+            stateHistory,
+            undoHistory,
+        };
+
+        localStorage.setItem(SAVE_NAME, JSON.stringify(saveFile));
     }, [stateHistory, undoHistory]);
 
     const currentState = useMemo(() => {
@@ -56,31 +62,36 @@ export default function useCarcasstate() {
             return getDefaultState();
         }
         else {
-            return stateHistory[stateHistory.length - 1];
+            return stateHistory[0];
         }
     }, [stateHistory]);
 
     const addToScore = useCallback((player, amount) => {
-        // TODO: Add logic for scoring
-
-        // HACK: For now just add to merson score
-        const mersonScore = amount
-        const messengerScore = 0;
+        if (!currentState.scores[player]) {
+            return ;
+        }
 
         const newState = {
             ...currentState,
             scores: {
                 ...currentState.scores,
                 [player]: [...currentState.scores[player]],
-            }
+            },
+            robbers: {
+                ...currentState.robbers,
+            },
         };
 
-        newState.scores[player] = [mersonScore, messengerScore];
+        carcassorithm(newState.scores, player, amount, newState.robbers);
 
-        setStateHistory([...stateHistory, newState]);
+        setStateHistory([newState, ...stateHistory]);
     }, [currentState, setStateHistory, stateHistory]);
 
     const setScoreByForce = useCallback((player, amounts) => {
+        if (!currentState.scores[player]) {
+            return ;
+        }
+
         const newState = {
             ...currentState,
             scores: {
@@ -91,10 +102,14 @@ export default function useCarcasstate() {
 
         newState.scores[player] = [...amounts];
 
-        setStateHistory([...stateHistory, newState]);
+        setStateHistory([newState, ...stateHistory]);
     }, [currentState, setStateHistory, stateHistory]);
 
     const setRobberPos = useCallback((player, robberPos) => {
+        if (!currentState.scores[player]) {
+            return ;
+        }
+
         const newState = {
             ...currentState,
             robbers: {
@@ -103,7 +118,7 @@ export default function useCarcasstate() {
             },
         };
 
-        setStateHistory([...stateHistory, newState]);
+        setStateHistory([newState, ...stateHistory]);
     }, [currentState, setStateHistory, stateHistory]);
 
     const undoLast = useCallback(() => {
@@ -114,7 +129,7 @@ export default function useCarcasstate() {
         const [stateToUndo, ...newStateHistory] = stateHistory;
 
         setStateHistory(newStateHistory);
-        setUndoHistory([...undoHistory, stateToUndo]);
+        setUndoHistory([stateToUndo, ...undoHistory]);
     }, [stateHistory, setStateHistory, undoHistory, setUndoHistory]);
 
     return {

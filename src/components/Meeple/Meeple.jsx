@@ -23,6 +23,18 @@ import redRobber from '../../assets/meeple/red_robber.png';
 const Root = styled.img`
     width: ${(props) => props.width}px;
     height: ${(props) => props.width}px;
+
+    filter: drop-shadow( 1px  1px 0 black)
+            drop-shadow( 1px -1px 0 black)
+            drop-shadow(-1px -1px 0 black)
+            drop-shadow(-1px  1px 0 black);
+    
+    :hover {
+        filter: drop-shadow( 1px  1px 0 white)
+                drop-shadow( 1px -1px 0 white)
+                drop-shadow(-1px -1px 0 white)
+                drop-shadow(-1px  1px 0 white);
+    }
 `;
 
 const MERSON_TYPE = 'merson';

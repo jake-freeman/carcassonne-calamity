@@ -1,8 +1,9 @@
 // import { useState } from 'react'
 // import greenMessenger from './assets/meeple/green_messenger.png'
 // import blueMersen from './assets/meeple/blue_mersen.png'
+import './assets/fonts/lindsay-becker.woff';
 import './App.css'
-import Scoreboard from './components/Scoreboard/Scoreboard'
+import Scoreboard from './components/Scoreboard/Scoreboard';
 import useCarcasstate from './data/useCarcasstate';
 import Scorecard from './components/Scorecard/Scorecard';
 
@@ -20,12 +21,14 @@ function App() {
 
     return (
         <div>
-            <Scoreboard />
+            <Scoreboard
+                currentState={currentState}
+                setRobberPos={setRobberPos}
+            />
             <Scorecard
                 addToScore={addToScore}
                 setScoreByForce={setScoreByForce}
                 undoLast={undoLast}
-                setRobberPos={setRobberPos}
 
                 currentState={currentState}
                 stateHistory={stateHistory}
