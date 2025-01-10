@@ -23,6 +23,7 @@ function getDefaultState() {
             joe: null,
             catlet: null,
         },
+        timestamp: null,
     };
 }
 
@@ -80,6 +81,7 @@ export default function useCarcasstate() {
             robbers: {
                 ...currentState.robbers,
             },
+            timestamp: new Date(),
         };
 
         carcassorithm({
@@ -102,7 +104,8 @@ export default function useCarcasstate() {
             scores: {
                 ...currentState.scores,
                 [player]: [...currentState.scores[player]],
-            }
+            },
+            timestamp: new Date(),
         };
 
         newState.scores[player] = [...amounts];
@@ -121,6 +124,7 @@ export default function useCarcasstate() {
                 ...currentState.robbers,
                 [player]: robberPos,
             },
+            timestamp: new Date(),
         };
 
         setStateHistory([newState, ...stateHistory]);
@@ -133,8 +137,13 @@ export default function useCarcasstate() {
 
         const [stateToUndo, ...newStateHistory] = stateHistory;
 
+        const undoState = {
+            ...stateToUndo,
+            undoTimestamp: new Date(),
+        };
+
         setStateHistory(newStateHistory);
-        setUndoHistory([stateToUndo, ...undoHistory]);
+        setUndoHistory([undoState, ...undoHistory]);
     }, [stateHistory, setStateHistory, undoHistory, setUndoHistory]);
 
     return {

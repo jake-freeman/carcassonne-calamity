@@ -22,6 +22,12 @@ const getMover = (gameState, player, score) => {
     return mover;
 };
 
+const moveRobbersAfterRobbing = (gameState, robbers, player, mover, newPos) => {
+    Object.keys(robbers)
+        .filter((robber) => robbers[robber] === gameState[player][mover] && robber != player)
+        .forEach((robber) => robbers[robber] = newPos);
+}
+
 // player is current scoring player
 // gameState is a dict with player names associated with a 2-member array containing the placement of their merson and messenger
 // score is the amount of points the current player is getting
@@ -33,7 +39,6 @@ export default function scorekeeper({
     robbers,
     isRobber = false,
 }) {
-    console.log(player);
     const mersonScore = gameState[player][MERSON_INDEX];
 
     const mersonLap = ((mersonScore % 50) + score) > 50
@@ -56,11 +61,11 @@ export default function scorekeeper({
 
     if (!isRobber) {
         Object.keys(robbers).forEach((robber) => {
-            if (robbers[robber] === (gameState[player][mover] % 50) && player !== robber) {
+            if (robbers[robber] === (gameState[player][mover] % 50) && (player !== robber) && (score >= 0)) {
                 scorekeeper({
                     gameState,
                     player: robber,
-                    score: -(Math.floor(-score / 2)),
+                    score: Math.ceil(score / 2),
                     robbers,
                     isRobber: true,
                 });
@@ -68,14 +73,14 @@ export default function scorekeeper({
             }
         });
     }
-    // else if (robberPos === currentMoverPos) {
-    //     robbers[robber] = gameState[player][moverIndex];
-    // }
 
-    if (mover == 0) {
-        gameState[player][MERSON_INDEX] = mersonLanding + (50 * mersonLapCount) + (50 * mersonLap);
+    const newPos = mover === MERSON_INDEX 
+        ? mersonLanding + (50 * mersonLapCount) + (50 * mersonLap)
+        : messengerLanding + (50 * messengerLapCount) + (50 * messengerLap);
+    
+    if (isRobber || score < 0) {
+        moveRobbersAfterRobbing(gameState, robbers, player, mover, newPos);
     }
-    else {
-        gameState[player][MESSENGER_INDEX] = messengerLanding + (50 * messengerLapCount) + (50 * messengerLap);
-    }
+    
+    gameState[player][mover] = newPos;
 }

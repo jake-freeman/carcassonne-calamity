@@ -6,6 +6,11 @@ import './App.css'
 import Scoreboard from './components/Scoreboard/Scoreboard';
 import useCarcasstate from './data/useCarcasstate';
 import Scorecard from './components/Scorecard/Scorecard';
+import styled from 'styled-components';
+
+const Title = styled.h1`
+    margin-top: 0;
+`;
 
 function App() {
     const {
@@ -21,6 +26,7 @@ function App() {
 
     return (
         <div>
+            <Title>Carcassonne Calamity</Title>
             <Scoreboard
                 currentState={currentState}
                 setRobberPos={setRobberPos}

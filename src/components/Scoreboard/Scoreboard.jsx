@@ -84,7 +84,7 @@ export default function Scoreboard({
     const { scores, robbers } = currentState;
 
     const scoresAndRobbers = Object.keys(scores).reduce((acc, currentPlayer) => {
-        const playerMeeple = [...scores[currentPlayer], robbers[currentPlayer] || null];
+        const playerMeeple = [...scores[currentPlayer], robbers[currentPlayer]];
         acc = { ...acc, [currentPlayer]: playerMeeple };
         return acc;
     }, {});

@@ -8,6 +8,24 @@ const MeepleButton = styled.div`
     display: inline-block;
     font-size: 30px;
     font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+`;
+
+const HistoryTextarea = styled.textarea`
+    min-height: 1000px;
+    min-width: 400px;
+`;
+
+const HistoryContainer = styled.div`
+    display: inline-block;
+    padding-left: 50px;
+    padding-right: 50px;
+`;
+
+const HistoryTitle = styled.h1`
+    margin: 0;
+    margin-bottom: 20px;
 `;
 
 function ScoreButton({
@@ -35,7 +53,7 @@ function ScoreButton({
                 onAddScoreSubmit(player, score);
             }
         }
-    }, [onAddScoreSubmit, onForceScoreSubmit, player]);
+    }, [onAddScoreSubmit, onForceScoreSubmit, player, currentState.scores]);
 
     return (
         <MeepleButton onClick={triggerScore}>
@@ -71,6 +89,14 @@ export default function Scorecard({
         setScoreByForce(player, score);
     }, [setScoreByForce]);
 
+    const onUndoClick = useCallback(() => {
+        const confirm = window.confirm('Are you FOR REAL rn?');
+
+        if (confirm) {
+            undoLast();
+        }
+    }, [undoLast]);
+
     return (
         <div>
             {
@@ -84,24 +110,27 @@ export default function Scorecard({
                     />
                 ))
             }
-            <button onClick={() => undoLast()}>Undo</button>
             <div>
-                <h3>State History</h3>
-                {stateHistory.map((state, i) => (
-                    <div key={i}>
-                        {JSON.stringify(state)}
-                    </div>
-                )
-                )}
+                <br />
+                <button onClick={onUndoClick}>Undo</button>
             </div>
             <div>
-                <h3>Undo History</h3>
-                {undoHistory.map((state, i) => (
-                    <div key={i}>
-                        {JSON.stringify(state)}
-                    </div>
-                )
-                )}
+                <HistoryContainer>
+                    <HistoryTitle>State History</HistoryTitle>
+                    <HistoryTextarea readOnly value={
+                        stateHistory.map((state) =>
+                            JSON.stringify(state, null, 4)
+                        )
+                    }/>
+                </HistoryContainer>
+                <HistoryContainer>
+                    <HistoryTitle>Undo History</HistoryTitle>
+                    <HistoryTextarea readOnly value={
+                        undoHistory.map((state) =>
+                            JSON.stringify(state, null, 4)
+                        )
+                    }/>
+                </HistoryContainer>
             </div>
         </div>
     );

@@ -120,7 +120,7 @@ export default function Tile({
     };
 
     const onTileClick = () => {
-        const player = window.prompt(`Move this players robber to space ${number}: `);
+        const player = window.prompt(`Move this player's robber to space ${number}: `);
 
         setRobberPos(player, number);
     };
@@ -130,7 +130,7 @@ export default function Tile({
             {makeMeepleRow(meeple, setRobberPos)}
             {makeMeepleRow(messengers, setRobberPos)}
             {makeMeepleRow(robbers, setRobberPos)}
-            <Number onClick={onTileClick}>{number}</Number>
+            <Number title={"Add Robber to space #" + number} onClick={onTileClick}>{number}</Number>
         </Root>
     );
 }

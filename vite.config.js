@@ -5,8 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
+    // Workaround to get the build picked up by github pages
     outDir: './docs',
-    emptyOutDir: true, // also necessary
+    emptyOutDir: true,
   },
   base: 'https://jake-freeman.github.io/carcassonne-calamity/',
 })

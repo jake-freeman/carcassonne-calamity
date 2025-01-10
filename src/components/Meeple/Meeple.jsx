@@ -90,7 +90,7 @@ export default function Meeple({
     width = 25,
 }) {
     return (
-        <Root width={width} src={getSourceFile(name, type)} />
+        <Root title={name} width={width} src={getSourceFile(name, type)} />
     );
 }
 
