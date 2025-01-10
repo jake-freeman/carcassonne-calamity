@@ -82,7 +82,12 @@ export default function useCarcasstate() {
             },
         };
 
-        carcassorithm(newState.scores, player, amount, newState.robbers);
+        carcassorithm({
+            gameState: newState.scores,
+            player,
+            score: amount,
+            robbers: newState.robbers,
+        });
 
         setStateHistory([newState, ...stateHistory]);
     }, [currentState, setStateHistory, stateHistory]);

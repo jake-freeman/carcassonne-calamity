@@ -26,7 +26,14 @@ const getMover = (gameState, player, score) => {
 // gameState is a dict with player names associated with a 2-member array containing the placement of their merson and messenger
 // score is the amount of points the current player is getting
 
-export default function scorekeeper(gameState, player, score, robbers, isRobber = false) {
+export default function scorekeeper({
+    gameState,
+    player,
+    score,
+    robbers,
+    isRobber = false,
+}) {
+    console.log(player);
     const mersonScore = gameState[player][MERSON_INDEX];
 
     const mersonLap = ((mersonScore % 50) + score) > 50
@@ -50,11 +57,20 @@ export default function scorekeeper(gameState, player, score, robbers, isRobber 
     if (!isRobber) {
         Object.keys(robbers).forEach((robber) => {
             if (robbers[robber] === (gameState[player][mover] % 50) && player !== robber) {
-                scorekeeper(gameState, robber, -(Math.floor(-score / 2)), robbers, true);
+                scorekeeper({
+                    gameState,
+                    player: robber,
+                    score: -(Math.floor(-score / 2)),
+                    robbers,
+                    isRobber: true,
+                });
                 robbers[robber] = null;
             }
         });
     }
+    // else if (robberPos === currentMoverPos) {
+    //     robbers[robber] = gameState[player][moverIndex];
+    // }
 
     if (mover == 0) {
         gameState[player][MERSON_INDEX] = mersonLanding + (50 * mersonLapCount) + (50 * mersonLap);
