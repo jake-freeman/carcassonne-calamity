@@ -41,7 +41,7 @@ export default function scorekeeper({
 }) {
     const mersonScore = gameState[player][MERSON_INDEX];
 
-    const mersonLap = ((mersonScore % 50) + score) > 50
+    const mersonLap = ((mersonScore % 50) + score) >= 50
         ? 1
         : 0;
 
@@ -50,7 +50,7 @@ export default function scorekeeper({
 
     const messengerScore = gameState[player][MESSENGER_INDEX];
 
-    const messengerLap = ((messengerScore % 50 ) + score) > 50
+    const messengerLap = ((messengerScore % 50 ) + score) >= 50
         ? 1
         : 0;
     
