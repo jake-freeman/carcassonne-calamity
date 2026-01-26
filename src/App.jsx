@@ -17,6 +17,7 @@ function App() {
         addToScore,
         setScoreByForce,
         undoLast,
+        resetAll,
         setRobberPos,
 
         currentState,
@@ -35,6 +36,7 @@ function App() {
                 addToScore={addToScore}
                 setScoreByForce={setScoreByForce}
                 undoLast={undoLast}
+                resetAll={resetAll}
 
                 currentState={currentState}
                 stateHistory={stateHistory}

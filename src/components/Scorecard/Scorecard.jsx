@@ -77,6 +77,7 @@ export default function Scorecard({
     addToScore,
     setScoreByForce,
     undoLast,
+    resetAll,
     currentState,
     stateHistory,
     undoHistory
@@ -97,6 +98,10 @@ export default function Scorecard({
         }
     }, [undoLast]);
 
+    const onResetClick = useCallback(() => {
+        resetAll();
+    }, [resetAll]);
+
     return (
         <div>
             {
@@ -113,6 +118,7 @@ export default function Scorecard({
             <div>
                 <br />
                 <button onClick={onUndoClick}>Undo</button>
+                <button onClick={onResetClick}>RESET EVERYTHING</button>
             </div>
             <div>
                 <HistoryContainer>

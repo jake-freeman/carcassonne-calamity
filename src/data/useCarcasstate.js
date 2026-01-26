@@ -146,10 +146,16 @@ export default function useCarcasstate() {
         setUndoHistory([undoState, ...undoHistory]);
     }, [stateHistory, setStateHistory, undoHistory, setUndoHistory]);
 
+    const resetAll = useCallback(() => {
+        setStateHistory([]);
+        setUndoHistory([]);
+    }, [setStateHistory, setUndoHistory]);
+
     return {
         addToScore,
         setScoreByForce,
         undoLast,
+        resetAll,
         setRobberPos,
 
         currentState,
