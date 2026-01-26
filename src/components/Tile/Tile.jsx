@@ -62,7 +62,10 @@ const Root = styled.div`
 `;
 
 const Number = styled.span`
-    color: black;
+    color: ${({ number }) =>
+        (number === 6 || number === 7)
+            ? 'green' : 'black'
+    };
     font-size: 30px;
     font-weight: bold;
     cursor: pointer;
@@ -130,7 +133,7 @@ export default function Tile({
             {makeMeepleRow(meeple, setRobberPos)}
             {makeMeepleRow(messengers, setRobberPos)}
             {makeMeepleRow(robbers, setRobberPos)}
-            <Number title={"Add Robber to space #" + number} onClick={onTileClick}>{number}</Number>
+            <Number title={"Add Robber to space #" + number} onClick={onTileClick} number={number}>{number}</Number>
         </Root>
     );
 }
