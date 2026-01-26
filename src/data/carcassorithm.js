@@ -2,12 +2,12 @@ const MERSON_INDEX = 0;
 const MESSENGER_INDEX = 1;
 
 // returns 0 if the merson moves, and 1 if the messenger moves 
-const getMover = (gameState, player, score) => {
+const getMover = (gameState, movingPlayer, score) => {
     let mover = MERSON_INDEX;
-    if ((gameState[player][MESSENGER_INDEX] + score) % 5 === 0) {
+    if ((gameState[movingPlayer][MESSENGER_INDEX] + score) % 5 === 0) {
         const sameModuloAfterScore = Object.keys(gameState).some((player) =>
-            (gameState[player][MERSON_INDEX] % 50 == (gameState[player][MESSENGER_INDEX] + score) % 50)
-            || (gameState[player][MESSENGER_INDEX] % 50 == (gameState[player][MERSON_INDEX] + score) % 50)
+            (gameState[player][MERSON_INDEX] % 50 === (gameState[player][MESSENGER_INDEX] + score) % 50)
+            || (gameState[player][MESSENGER_INDEX] % 50 === (gameState[player][MERSON_INDEX] + score) % 50)
         );
 
         mover = sameModuloAfterScore
@@ -15,7 +15,7 @@ const getMover = (gameState, player, score) => {
             : MESSENGER_INDEX;
     }
 
-    mover = (gameState[player][MESSENGER_INDEX] + score) % 5 === 1
+    mover = (gameState[movingPlayer][MESSENGER_INDEX] + score) % 5 === 1
         ? MESSENGER_INDEX
         : mover;
 
@@ -39,24 +39,6 @@ export default function scorekeeper({
     robbers,
     isRobber = false,
 }) {
-    const mersonScore = gameState[player][MERSON_INDEX];
-
-    const mersonLap = ((mersonScore % 50) + score) >= 50
-        ? 1
-        : 0;
-
-    const mersonLanding = (mersonScore + score) % 50;
-    const mersonLapCount = Math.floor(mersonScore / 50);
-
-    const messengerScore = gameState[player][MESSENGER_INDEX];
-
-    const messengerLap = ((messengerScore % 50 ) + score) >= 50
-        ? 1
-        : 0;
-    
-    const messengerLanding = (messengerScore + score) % 50;
-    const messengerLapCount = Math.floor(messengerScore / 50);
-
     const mover = getMover(gameState, player, score);
 
     if (!isRobber) {
@@ -74,13 +56,11 @@ export default function scorekeeper({
         });
     }
 
-    const newPos = mover === MERSON_INDEX 
-        ? mersonLanding + (50 * mersonLapCount) + (50 * mersonLap)
-        : messengerLanding + (50 * messengerLapCount) + (50 * messengerLap);
-    
+    const newMoverScore = gameState[player][mover] + score;
+
     if (isRobber || score < 0) {
-        moveRobbersAfterRobbing(gameState, robbers, player, mover, newPos);
+        moveRobbersAfterRobbing(gameState, robbers, player, mover, newMoverScore);
     }
     
-    gameState[player][mover] = newPos;
+    gameState[player][mover] = newMoverScore;
 }
