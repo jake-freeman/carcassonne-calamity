@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import Meeple from "../Meeple/Meeple";
 import styled from 'styled-components';
 
@@ -82,14 +82,6 @@ export default function Scorecard({
     stateHistory,
     undoHistory
 }) {
-    const onAddScoreSubmit = useCallback((player, score) => {
-        addToScore(player, score);
-    }, [addToScore]);
-
-    const onForceScoreSubmit = useCallback((player, score) => {
-        setScoreByForce(player, score);
-    }, [setScoreByForce]);
-
     const onUndoClick = useCallback(() => {
         const confirm = window.confirm('Are you FOR REAL rn?');
 
@@ -98,9 +90,21 @@ export default function Scorecard({
         }
     }, [undoLast]);
 
-    const onResetClick = useCallback(() => {
-        resetAll();
-    }, [resetAll]);
+    const onSimulateClick = useCallback(() => {
+        const players = Object.keys(currentState.scores);
+
+        const player = players[Math.floor(Math.random() * players.length)];
+        const score = Math.floor(Math.random() * 50);
+
+        addToScore(player, score);
+    }, [addToScore, currentState.scores]);
+
+    const devMode = useMemo(() => {
+        const params = new URLSearchParams(document.location.search);
+        const dev = params.get("dev");
+
+        return !!dev;
+    }, []);
 
     return (
         <div>
@@ -110,19 +114,26 @@ export default function Scorecard({
                         key={i}
                         player={player}
                         currentState={currentState}
-                        onAddScoreSubmit={onAddScoreSubmit}    
-                        onForceScoreSubmit={onForceScoreSubmit}    
+                        onAddScoreSubmit={addToScore}    
+                        onForceScoreSubmit={setScoreByForce}    
                     />
                 ))
             }
             <div>
                 <br />
                 <button onClick={onUndoClick}>Undo</button>
-                <button onClick={onResetClick}>RESET EVERYTHING</button>
+                {
+                    devMode ? (
+                        <>
+                            <button onClick={resetAll}>RESET EVERYTHING</button>
+                            <button onClick={onSimulateClick}>Simulate Random Scores</button>
+                        </>
+                    ) : null
+                }
             </div>
             <div>
                 <HistoryContainer>
-                    <HistoryTitle>State History</HistoryTitle>
+                    <HistoryTitle>State History ({stateHistory.length})</HistoryTitle>
                     <HistoryTextarea readOnly value={
                         stateHistory.map((state) =>
                             JSON.stringify(state, null, 4)
@@ -130,7 +141,7 @@ export default function Scorecard({
                     }/>
                 </HistoryContainer>
                 <HistoryContainer>
-                    <HistoryTitle>Undo History</HistoryTitle>
+                    <HistoryTitle>Undo History ({undoHistory.length})</HistoryTitle>
                     <HistoryTextarea readOnly value={
                         undoHistory.map((state) =>
                             JSON.stringify(state, null, 4)
